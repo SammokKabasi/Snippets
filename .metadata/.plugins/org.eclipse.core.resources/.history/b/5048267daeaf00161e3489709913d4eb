@@ -1,0 +1,27 @@
+package com.hackerrank.lcs;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Solution {
+
+	private static String acceptInput() {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print(">");
+		try {
+			return br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static void main(String[] args) {
+		String a = "abcdcba";
+		String b = "dcbaabc";
+		int result = new LCS_50170283().findLcs(a, b);
+		System.out.println(result);
+
+}

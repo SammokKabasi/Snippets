@@ -1,0 +1,32 @@
+package com.sammok.sort.charactersbyfrequency;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class Solution {
+	public String frequencySort(String s) {
+		char[] chars = s.toCharArray();
+
+		Comparator<Map.Entry<Character, Integer>> comparator = new Comparator<Map.Entry<Character, Integer>>() {
+
+			@Override
+			public int compare(Map.Entry<Character, Integer> o1, Map.Entry<Character, Integer> o2) {
+				return o1.getValue().compareTo(o2.getValue());
+			}
+		};
+		TreeMap<Character, Integer> map = new TreeMap<Character, Integer>(comparator);
+		
+		for(Character character : chars) {
+			if(map.containsKey(character)) {
+				map.put(character, map.get(character) +1);
+			} else {
+				map.put(character, map.put(character, 1)));
+			}
+		}
+		
+		return null;
+	}
+}

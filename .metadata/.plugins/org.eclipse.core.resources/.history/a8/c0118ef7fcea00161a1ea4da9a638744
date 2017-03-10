@@ -1,0 +1,23 @@
+package com.hackerrank.extralongfactorial;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigInteger;
+
+public class Solution {
+	public static void main(String[] args) {
+		BigInteger bigInteger = new BigInteger("0");
+	}
+	
+	private static String acceptInput() {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print(">");
+		try {
+			return br.readLine() + "\n" + br.readLine() + "\n"+ br.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+}

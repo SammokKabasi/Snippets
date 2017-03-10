@@ -1,0 +1,27 @@
+package com.leetcode.lfu;
+
+import java.util.HashMap;
+
+public class LFUCache {
+
+	HashMap<Integer, Integer> map ;
+	
+    public LFUCache(int capacity) {
+        map = new HashMap<>(capacity);
+    }
+    
+    public int get(int key) {
+        return (int)map.get(key);
+    }
+    
+    public void set(int key, int value) {
+        
+    }
+}
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * LFUCache obj = new LFUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.set(key,value);
+ */

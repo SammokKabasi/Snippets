@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extract method &apos;private void getMinimumVertex()&apos; from &apos;MST.prim()&apos; to &apos;MST&apos;&#x0A;- Original project: &apos;531hw1&apos;&#x0A;- Method name: &apos;getMinimumVertex&apos;&#x0A;- Destination type: &apos;MST&apos;&#x0A;- Declared visibility: &apos;private&apos;" comments="false" description="Extract method &apos;getMinimumVertex&apos;" destination="0" exceptions="false" flags="786434" id="org.eclipse.jdt.ui.extract.method" input="/src&lt;{MST.java" name="getMinimumVertex" replace="false" selection="397 449" stamp="1477809212668" version="1.0" visibility="2"/>
+</session>

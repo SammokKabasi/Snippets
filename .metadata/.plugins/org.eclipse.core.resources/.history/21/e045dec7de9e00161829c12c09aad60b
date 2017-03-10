@@ -1,0 +1,106 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Set;
+
+/**
+ * Created by sirsmokesalot on 10/1/16.
+ */
+public class Graph {
+
+	private ArrayList<Vertex> vertices;
+
+	private ArrayList<Vertex> visitedVertices;
+	
+	public ArrayList<Vertex> getVisitedVertices() {
+		return visitedVertices;
+	}
+
+	public void setVisitedVertices(ArrayList<Vertex> visitedVertices) {
+		this.visitedVertices = visitedVertices;
+	}
+
+	public int getVertexPicker() {
+		return vertexPicker;
+	}
+
+	// removes from vertices, adds to visited vertex
+	private int vertexPicker = 0;
+
+	public Vertex pickVertex() {
+		Vertex visitedVertex = vertices.get(vertexPicker);
+		vertices.set(vertexPicker, null);
+		visitedVertices.add(visitedVertex);
+		vertexPicker++;
+		return visitedVertex;
+		
+	}
+
+	public Graph() {
+		visitedVertices = new ArrayList<>();
+	}
+
+	public ArrayList<Vertex> getVertices() {
+		return vertices;
+	}
+
+	public void setVertices(ArrayList<Vertex> vertices) {
+		this.vertices = vertices;
+	}
+
+	@Override
+	public String toString() {
+		return "Graph{" + "vertices=" + vertices + '}';
+	}
+}
+
+class Vertex {
+	// each vertex will connect to a bunch of other vertices (edges) and each
+	// edge will have a weight associated with it
+
+	// using a LinkedHashMap because it preserves insertion order. key->vertex ,
+	// value->vertex object
+
+	private MinHeapImpl edges;
+	
+	private Integer vertexId;
+
+	public void setVertexId(Integer vertexId) {
+		this.vertexId = vertexId;
+	}
+
+	public MinHeapImpl getEdges() {
+		return edges;
+	}
+
+	public void setEdges(MinHeapImpl edges) {
+		this.edges = edges;
+	}
+
+	public Vertex() {
+		edges = new MinHeapImpl();
+	}
+
+	public Integer getVertexId() {
+		return vertexId;
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("\nVertex : " + vertexId + "\n");
+
+		ArrayList<KeyValuePair> edgeVertices = edges.getKeyValuePairs();
+		// iterate over the minheap
+		for (int i = 0; i < edges.getKeyValuePairs().size(); i++) {
+			sb.append("ID: " + edgeVertices.get(i).getVertex().getVertexId() + "\tweight : " + edgeVertices.get(i).getWeight() + "\n");
+		}
+		return sb.toString();
+	}
+	
+	public KeyValuePair getVertexWithMinWeight() {
+		return edges.getKeyValuePairs().get(0);
+	}
+}

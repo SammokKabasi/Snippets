@@ -1,0 +1,28 @@
+package com.leetcode.circulararrayloop;
+
+import java.util.Arrays;
+
+public class Solution {
+	public boolean circularArrayLoop(Integer[] nums) {
+		int i = 0;
+		int direction = 0;
+		while(true) {
+			i = i + nums[i];
+			if(i>=nums.length) {
+				i = Math.floorMod(i, nums.length);
+				direction++;
+			} else if(i<0) {
+				i = Math.floorMod(i, nums.length);
+				direction--;
+			}
+			
+		}
+		return false;
+
+	}
+
+	public static void main(String[] args) {
+		Integer nums[] = { -2, 1, -1, -2, -2 };
+		System.out.println(new Solution().circularArrayLoop(nums));
+	}
+}

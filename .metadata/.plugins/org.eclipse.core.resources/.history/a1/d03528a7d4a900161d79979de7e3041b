@@ -1,0 +1,9 @@
+package com.consultancy.yeah;
+
+public class Solution {
+	
+	public static void main(String[] args) {
+			String temp = { "a", "b"};
+	}
+
+}

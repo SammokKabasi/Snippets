@@ -1,0 +1,12 @@
+package removeelement;
+public class Solution {
+    public int removeElement(int[] nums, int val) {
+       int count = nums.length;
+       for(int num : nums) {
+           if(num==val) {
+               count--;
+           }
+       }
+       return count;
+    }
+}

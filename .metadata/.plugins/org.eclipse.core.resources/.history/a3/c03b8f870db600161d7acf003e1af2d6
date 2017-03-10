@@ -1,0 +1,74 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import javax.swing.plaf.synth.SynthScrollPaneUI;
+
+public class LCS_50170283 {
+
+	public static void main(String[] args) {
+
+		String a = "bacdca";
+		String b = "adbcda";
+		int result = new LCS_50170283().findLcs(a, b);
+		System.out.println(result);
+	}
+
+	private int findLcs(String first, String second) {
+		char[] a = first.toCharArray();
+		char[] b = second.toCharArray();
+		int m = a.length;
+		int n = b.length;
+		int[][] opt = new int[2][n + 1];
+		String[][] pi = new String[2][n + 1];
+
+		int i, j;
+		for (j = 0; j <= n; j++) {
+			opt[0][j] = 0;
+		}
+
+		for (i = 1; i <= m; i++) {
+			opt[i % 2][0] = 0;
+			for (j = 1; j <= n; j++) {
+				if (a[i - 1] == b[j - 1]) {
+					opt[i % 2][j] = opt[(i - 1) % 2][j - 1] + 1;
+					pi[i % 2][j] = 'd';
+
+				} else {
+					opt[i % 2][j] = Math.max(opt[(i - 1) % 2][j], opt[i % 2][j - 1]);
+
+					if (opt[(i - 1) % 2][j] >= opt[i % 2][j - 1]) {
+						pi[i % 2][j] = 'l';
+					} else {
+						pi[i % 2][j] = 'u';
+					}
+				}
+			}
+		}
+
+		for (int x = 0; x < opt.length; x++) {
+			for (int y = 0; y < opt[x].length; y++) {
+				System.out.print(opt[x][y] + "," + pi[x][y] + "\t");
+			}
+			System.out.println();
+
+		}
+		
+//		System.out.println(opt.length);
+//		System.out.println(pi.length);
+
+		return opt[m % 2][n];
+	}
+
+	private static String acceptInput() {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print(">");
+		try {
+			return br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+}

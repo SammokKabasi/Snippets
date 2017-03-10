@@ -1,0 +1,184 @@
+import java.io.*;
+import java.util.ArrayList;
+
+public class MST {
+	private Graph graph = new Graph();
+	Graph mst = new Graph();
+	private String input;
+
+	public static void main(String[] args) {
+		File file = new File("P1_Public_Cases/test4");
+		MST main = new MST();
+		main.process(file);
+		main.prim();
+	}
+
+	public void prim() {
+		// start at 0
+
+		graph.pickVertex();
+		while (graph.getVertices().size() != graph.getVisitedVertices().size()) {
+			
+			
+			System.out.println("==================================================================");
+			System.out.println();
+			Vertex a = null;
+			Vertex b = null;
+			Long weight = Long.MAX_VALUE;
+
+			// iterate over all visited vertices and get the minimum edge
+			for (Vertex visitedVertex : graph.getVisitedVertices()) {
+				
+				System.out.println("Iterating through visited vertex  " + visitedVertex);
+				
+				KeyValuePair minKeyValuePair = visitedVertex.getVertexWithMinWeight();
+				if(minKeyValuePair==null) {
+					continue;
+				}
+				if (minKeyValuePair.getWeight() < weight && !graph.getVisitedVertices().contains(minKeyValuePair.getVertex())) {
+					weight = (Long) minKeyValuePair.getWeight();
+					a = visitedVertex;
+					b = minKeyValuePair.getVertex();
+					weight = minKeyValuePair.getWeight();
+					System.out.println("Minimum now is " + a.getVertexId() + "," + b.getVertexId() + "," + weight) ;
+				}
+			}
+			//extract the min from vertex a's heap
+			
+	
+			System.out.println("VERTEX A->" + a);
+			System.out.println("VERTEX B->" + b);
+			System.out.println("WEIGHT BETWEEN A AND B-> " +weight);
+			
+			graph.getVertices().get(a.getVertexId() -1 ).getEdges().extractMin();
+			
+			//we've deleted B from A's vertex list but we should also delete A from B's vertex list
+			System.out.println("In vertex " + b.getVertexId() + ", deleting vertex " + a.getVertexId());
+			graph.getVertices().get(b.getVertexId() - 1).getEdges().delete(a.getVertexId());
+			
+
+			
+			// we add minimumVertex to visited nodes, and remove it from
+			// unvisited vertices
+			graph.getVisitedVertices().add(b);
+//			graph.getVertices().remove(b);
+
+			// add this vertex and weight to mst tree
+			addEdge(a.getVertexId(), b.getVertexId(), weight, mst);
+			
+
+			System.out.println("INPUT ALL VERTICES->");
+			System.out.println(graph.getVertices());
+			System.out.println("INPUT VISITED VERTICES");
+			System.out.println(graph.getVisitedVertices());
+			System.out.println("OUTPUT VERTICES");
+			System.out.println(mst.getVertices());
+			// repeat this until there are no more unvisited vertices
+
+		}
+		
+		System.out.println("Computing total weight of output vertices");
+		long weight = 0;
+		for(int i =0; i<mst.getVertices().size();i++) {
+			for(int j=0;j<mst.getVertices().get(i).getEdges().getKeyValuePairs().size(); j++) {
+				weight = weight + mst.getVertices().get(i).getEdges().getKeyValuePairs().get(j).getWeight();
+			}
+		}
+		System.out.println("The total weight is " + weight);
+	}
+
+	public void process(File inputFile) {
+		input = readFile(inputFile);
+		createGraphObject(input);
+	}
+
+	public void createGraphObject(String input) {
+		this.input = input;
+		// Read the first input line and create that many vertices
+		String[] lines = input.split("\n");
+		int numberOfVertices = Integer.valueOf(lines[0].split(" ")[0]);
+		graph.setVertices(new ArrayList<>(numberOfVertices));
+		mst.setVertices(new ArrayList<>(numberOfVertices));
+		for (Integer i = 1; i <= numberOfVertices; i++) {
+			Vertex vertex = new Vertex();
+			vertex.setVertexId(i);
+			graph.getVertices().add(vertex);
+			Vertex mstVertex = new Vertex();
+			mstVertex.setVertexId(i);
+			mst.getVertices().add(mstVertex);
+		}
+
+		// read subsequent lines
+
+		for (int i = 1; i < lines.length; i++) {
+			// for every line, add the edge
+			int a = Integer.valueOf(lines[i].split(" ")[0]);
+			int b = Integer.valueOf(lines[i].split(" ")[1]);
+			Long weight = Long.valueOf(lines[i].split(" ")[2]);
+			addEdge(a, b, weight, graph);
+			addEdge(b, a, weight, graph); // because the weights are bidirectional
+		}
+
+		System.out.println("INPUT GRAPH-> \n" + graph);
+		System.out.println("");
+		System.out.println("OUTPUT TREE-> \n" + mst);
+
+	}
+
+	/**
+	 * @param a
+	 *            id of vertex a
+	 * @param b
+	 *            id of vertex b
+	 * @param weight
+	 *            from vertex a to b
+	 */
+	public void addEdge(Integer a, Integer b, Long weight, Graph graph) {
+
+		// hint: vertex with vertex number k will be kth element of arraylist
+		// graph.vertices
+		// (ensures constant time retrieval)
+		Vertex vertex_a = graph.getVertices().get(a - 1); // o(1) time
+
+		Vertex vertex_b = graph.getVertices().get(b - 1); // o(1) time //this
+															// should exist
+															// because input is
+															// written this way!
+
+		if (vertex_b == null) {
+			throw new RuntimeException("vertex b does not exist for some reason");
+		}
+
+		vertex_a.getEdges().insert(new KeyValuePair(weight, vertex_b)); // o(lg
+																		// n
+																		// time)
+	}
+
+	public String readFile(File inputFile) {
+		BufferedReader br = null;
+		String everything = null;
+		try {
+			br = new BufferedReader(new FileReader(inputFile));
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+			while (line != null) {
+				sb.append(line);
+				sb.append(System.lineSeparator());
+				line = br.readLine();
+			}
+			everything = sb.toString();
+			// System.out.println(everything);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return everything;
+
+	}
+
+}

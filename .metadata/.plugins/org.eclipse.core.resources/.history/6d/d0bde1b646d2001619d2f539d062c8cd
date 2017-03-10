@@ -1,0 +1,65 @@
+package com.leetcode.mergeksortedlists;
+
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
+// Definition for singly-linked list.
+class ListNode {
+	int val;
+	ListNode next;
+
+	ListNode(int x) {
+		val = x;
+	}
+}
+
+public class Solution {
+	public ListNode mergeKLists(ListNode[] lists) {
+		ListNode sorted = null;
+		ListNode head = sorted;
+		Comparator<ListNode> comparator = new Comparator<ListNode>() {
+
+			@Override
+			public int compare(ListNode o1, ListNode o2) {
+				return o1.val - o2.val;
+			}
+		};
+		PriorityQueue<ListNode> queue = new PriorityQueue<>(comparator);
+
+		// first bunch of listnodes
+		for (ListNode list : lists) {
+			if (list != null) {
+				queue.add(list);
+				list = list.next;
+			}
+		}
+
+		while (!queue.isEmpty()) {
+			ListNode node = queue.poll();
+			sorted = new ListNode(node.val);
+			if (head == null) {
+				head = sorted;
+			}
+			sorted = sorted.next;
+			if (node.next != null) {
+				node = node.next;
+				queue.add(node);
+			}
+		}
+
+		return head;
+	}
+
+	public static void main(String[] args) {
+		ListNode listnode = new ListNode(0);
+		listnode.next = new ListNode(2);
+		listnode.next.next = new ListNode(5);
+		ListNode[] lists = new ListNode[1];
+		lists[0] = listnode;
+		ListNode res = new Solution().mergeKLists(lists);
+		while (res != null) {
+			System.out.print(res.val + " ");
+			res = res.next;
+		}
+	}
+}

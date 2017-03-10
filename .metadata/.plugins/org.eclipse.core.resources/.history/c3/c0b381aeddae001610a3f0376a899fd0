@@ -1,0 +1,49 @@
+package com.leetcode.circulararrayloop;
+
+import java.util.Arrays;
+
+public class Solution {
+	public boolean circularArrayLoop(Integer[] nums) {
+		int i = 0;
+		int n = nums.length;
+		System.out.println(i);
+		System.out.println(Arrays.asList(nums));
+		System.out.println();
+		int lastNumber = -1;
+		for (int k = 0; k < nums.length; k++) {
+			if (nums[i] == 0) {
+				return true;
+			} else {
+				int temp = i;
+				i = i + nums[i];
+				nums[temp] = 0;
+				if (i == lastNumber) {
+					return false;
+				}
+				
+//				if (i < 0 && lastNumber > 0) {
+//					return false;
+//				}
+//				if (i > 0 && lastNumber < 0) {
+//					return false;
+//				}
+				
+				lastNumber  = i;
+			}
+			i = Math.floorMod(i, n);
+			;
+
+			System.out.println(i);
+			System.out.println(Arrays.asList(nums));
+			System.out.println();
+		}
+
+		return false;
+
+	}
+
+	public static void main(String[] args) {
+		Integer nums[] = { -2, 1, -1, -2, -2 };
+		System.out.println(new Solution().circularArrayLoop(nums));
+	}
+}

@@ -1,0 +1,33 @@
+package com.sammok.substringconcat;
+
+import java.util.List;
+
+public class Solution {
+	public List<Integer> findSubstring(String s, String[] words) {
+		
+		char[] sChar = s.toCharArray();
+		
+		char[][] wordsChar = null;
+		
+		int i=0;
+		for(String word : words) {
+			wordsChar[i] = word.toCharArray();
+		}
+		
+		
+		
+		
+		
+		for(i=0; i<sChar.length; i++) {
+			for(int j=0; j<words.length; j++) {
+				
+				
+				for(int k = 0; k<words[j].length(); k++) {
+					
+				}
+			}
+		}
+
+		return null;
+	}
+}

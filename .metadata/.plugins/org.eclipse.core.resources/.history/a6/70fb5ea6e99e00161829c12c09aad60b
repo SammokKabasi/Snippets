@@ -1,0 +1,132 @@
+import java.util.ArrayList;
+
+import sun.applet.Main;
+
+/**
+ * Sammok Kabasi My implementation of a priority queue using a heap. Created by
+ * sirsmokesalot on 10/17/16.
+ */
+public class MinHeapImpl {
+
+	// this array list should always be sorted because priority queue
+	private ArrayList<KeyValuePair> keyValuePairs;
+
+	private int totalSize = 0;
+
+	public ArrayList<KeyValuePair> getKeyValuePairs() {
+		return keyValuePairs;
+	}
+
+	public MinHeapImpl(int size) {
+		keyValuePairs = new ArrayList<>(size);
+	}
+
+	public MinHeapImpl() {
+		keyValuePairs = new ArrayList<>();
+	}
+
+	public void insert(KeyValuePair keyValuePair) {
+		// add to the end and heapify up
+		keyValuePairs.add(keyValuePair);
+		try {
+			if (keyValuePairs.size() == 1) {
+				return;
+			}
+			heapifyUp();
+		} finally {
+//			 System.out.println("AFTER HEAP INSERT->" + keyValuePairs);
+		}
+	}
+
+	public KeyValuePair extractMin() {
+		KeyValuePair ret = keyValuePairs.get(0);
+
+		if (keyValuePairs.size() == 1) {
+			keyValuePairs.remove(0);
+		} else {
+			keyValuePairs.set(0, keyValuePairs.remove(keyValuePairs.size() - 1));
+			heapifyDown();
+		}
+//		System.out.println("AFTER EXTRACT MIN->" + keyValuePairs);
+		return ret;
+	}
+
+	private void heapifyDown(int i) {
+		s = keyValuePairs.size();
+		int j = 0;
+
+		while (2 * i + 1 < s) {
+			// if left child is the last node, or left child is the bigger node
+			if (2 * i + 1 == s - 1 || keyValuePairs.get(2 * i + 1).getWeight() <= keyValuePairs.get(2 * i + 2).getWeight()) {
+				j = 2 * i + 1;
+			} else { // if right child is bigger node
+				j = 2 * i + 2;
+			}
+			// swap parent with child if parent's weight is more than child's
+			// key
+			if (keyValuePairs.get(i).getWeight() > keyValuePairs.get(j).getWeight()) {
+				swap(i, j);
+				i = j;
+			} else {
+				break;
+			}
+
+			// change current index to that of child's index
+			i = j;
+		}
+	}
+
+	private void heapifyUp() {
+		int i = keyValuePairs.size() - 1;
+		while (i > 0) {
+			int j = Math.floorDiv(i, 2);
+			if (keyValuePairs.get(i).getWeight() < keyValuePairs.get(j).getWeight()) {
+				swap(i, j);
+				i = j;
+			} else {
+				break;
+			}
+		}
+	}
+
+	private void swap(int i, int j) {
+		KeyValuePair temp = keyValuePairs.get(i);
+		keyValuePairs.set(i, keyValuePairs.get(j));
+		keyValuePairs.set(j, temp);
+	}
+
+	public KeyValuePair seek() {
+		return keyValuePairs.get(0);
+	}
+
+	public static void main(String[] args) {
+		MinHeapImpl heap = new MinHeapImpl();
+		heap.insert(new KeyValuePair(7, new Vertex()));
+		heap.extractMin();
+		heap.insert(new KeyValuePair(6, new Vertex()));
+		heap.insert(new KeyValuePair(10, new Vertex()));
+		heap.extractMin();
+		heap.insert(new KeyValuePair(4, new Vertex()));
+		heap.insert(new KeyValuePair(3, new Vertex()));
+		heap.insert(new KeyValuePair(200, new Vertex()));
+		heap.delete(2);
+		heap.extractMin();
+		heap.extractMin();
+		heap.extractMin();
+
+	}
+
+	public void delete(int vertexId) {
+		for(int j=0; j<keyValuePairs.size();j++) {
+			if (keyValuePairs.get(j).getVertex().getVertexId() == vertexId) {
+				keyValuePairs.set(j, keyValuePairs.remove(keyValuePairs.size() - 1));
+				break;
+			}
+		}
+		heapifyDown();
+//		System.out.println("AFTER DELETE " + i +" -> " + keyValuePairs);
+	}
+	
+	
+
+}

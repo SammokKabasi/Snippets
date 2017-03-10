@@ -1,0 +1,19 @@
+package com.leetcode.circulararrayloop;
+
+import java.util.Arrays;
+
+public class Solution {
+	public boolean circularArrayLoop(Integer[] nums) {
+
+			i = Math.floorMod(i, n);
+		}
+
+	return false;
+
+	}
+
+	public static void main(String[] args) {
+		Integer nums[] = { -2, 1, -1, -2, -2 };
+		System.out.println(new Solution().circularArrayLoop(nums));
+	}
+}

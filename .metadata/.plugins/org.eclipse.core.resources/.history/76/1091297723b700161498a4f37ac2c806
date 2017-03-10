@@ -1,0 +1,45 @@
+package com.leetcode.lfu;
+
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.PriorityQueue;
+
+public class LFUCache {
+
+	HashMap<Integer, Integer> map;
+	PriorityQueue<Frequency> frequencies = new PriorityQueue<>();
+
+	Comparator<Frequency> comparator = new Comparator<LFUCache.Frequency>() {
+
+		@Override
+		public int compare(Frequency o1, Frequency o2) {
+			if (o1.frequency < o2.frequency)
+				return -1;
+			else
+				return 1;
+		}
+
+	};
+
+	class Frequency {
+		int key;
+		int frequency;
+	}
+
+	public LFUCache(int capacity) {
+		map = new HashMap<>(capacity);
+	}
+
+	public int get(int key) {
+		return (int) map.get(key);
+	}
+
+	public void set(int key, int value) {
+		map.put(key, value);
+	}
+}
+
+/**
+ * Your LFUCache object will be instantiated and called as such: LFUCache obj =
+ * new LFUCache(capacity); int param_1 = obj.get(key); obj.set(key,value);
+ */

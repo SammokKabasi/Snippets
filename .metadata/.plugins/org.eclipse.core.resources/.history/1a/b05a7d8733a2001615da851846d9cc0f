@@ -1,0 +1,17 @@
+package com.sammok.sort.charactersbyfrequency;
+
+import java.util.TreeMap;
+
+public class Solution {
+	public String frequencySort(String s) {
+		Character[] chars = s.toCharArray();
+		
+		TreeMap<Integer, Character> map = new TreeMap<>();
+		for (char ch : chars) {	
+			
+			
+		}
+
+		return null;
+	}
+}

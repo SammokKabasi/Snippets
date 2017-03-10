@@ -1,0 +1,530 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+public class MST_50170283 {
+	private Graph graph = new Graph();
+	Graph mst = new Graph();
+	private String input;
+
+	public static void main(String[] args) {
+		File file = new File("test3");
+		MST_50170283 main = new MST_50170283();
+		main.process(file);
+		main.prim();
+
+	}
+
+	// start at 0
+	public void prim() {
+
+		graph.pickVertex(); // pick the first vertex, so now
+							// graph.visitedVertices has 1 vertex
+
+		while (graph.getVertices().size() > graph.getVisitedVertices().size()) {
+
+			System.out.println("==================================================================");
+			System.out.println();
+			Vertex a = null;
+			Vertex b = null;
+			Long weight = Long.MAX_VALUE;
+
+			System.out.println("all.size=" + graph.getVertices().size() + "\tvisited.size=" + graph.getVisitedVertices().size());
+
+			// iterate over all visited vertices and get the minimum edge
+			for (Vertex visitedVertex : graph.getVisitedVertices()) {
+
+				// //System.out.println("Iterating through visited vertex " +
+				// visitedVertex);
+
+				// iterate over all the mins in visited vertex. If min edge is
+				// already present in visitedVertices, delete that edge
+
+				KeyValuePair minKeyValuePair = visitedVertex.getVertexWithMinWeight();
+				if (minKeyValuePair == null) {
+					continue;
+				}
+				if (!graph.getVisitedVertices().contains(minKeyValuePair.getVertex())) {
+					if (minKeyValuePair.getWeight() < weight) {
+						weight = (Long) minKeyValuePair.getWeight();
+						a = visitedVertex;
+						b = minKeyValuePair.getVertex();
+						weight = minKeyValuePair.getWeight();
+					}
+				} else {
+					// the minEdge is already present in visited vertices, there
+					// is no point in this edge still being in the visited
+					// vertex.
+					// so delete this edge
+					KeyValuePair kvp = visitedVertex.getEdges().extractMin();
+
+					// should also delete the b's edge from A (stupid
+					// bidirectional notation)
+
+//					graph.getVertices().get(kvp.getVertex().getVertexId() - 1).getEdges().delete(visitedVertex.getVertexId());
+
+				}
+				// //System.out.println("Minimum now is " + a.getVertexId() +
+				// "," + b.getVertexId() + "," + weight) ;
+			}
+
+			// extract the min from vertex a's heap
+
+			System.out.println("VERTEX A->" + a);
+			System.out.println("VERTEX B->" + b);
+			System.out.println("WEIGHT BETWEEN A AND B-> " + weight);
+
+			try {
+				graph.getVertices().get(a.getVertexId() - 1).getEdges().extractMin();
+				// //System.out.println("In vertex " + b.getVertexId() + ",
+				// deleting vertex " + a.getVertexId());
+				// we've deleted B from A's vertex list but we should also
+				// delete A from B's vertex list
+//				graph.getVertices().get(b.getVertexId() - 1).getEdges().delete(a.getVertexId());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			// we add minimumVertex to visited nodes, 
+			
+			graph.getVisitedVertices().add(b);
+			// graph.getVertices().remove(b);
+
+			// add this vertex and weight to mst tree
+			addEdge(a.getVertexId(), b.getVertexId(), weight, mst);
+
+			System.out.println("INPUT ALL VERTICES->");
+			System.out.println(graph.getVertices());
+			System.out.println("INPUT VISITED VERTICES");
+			System.out.println(graph.getVisitedVertices());
+			System.out.println("OUTPUT VERTICES");
+			System.out.println(mst.getVertices());
+			// repeat this until there are no more unvisited vertices
+
+		}
+
+		//System.out.println("Computing total weight of output vertices");
+		long weight = 0;
+		for (int i = 0; i < mst.getVertices().size(); i++) {
+			for (int j = 0; j < mst.getVertices().get(i).getEdges().getKeyValuePairs().size(); j++) {
+				weight = weight + mst.getVertices().get(i).getEdges().getKeyValuePairs().get(j).getWeight();
+			}
+		}
+		//System.out.println("The total weight is " + weight);
+
+		// output string
+		StringBuffer solString = new StringBuffer();
+		solString.append(weight + System.lineSeparator());
+		for (int i = 0; i < mst.getVertices().size(); i++) {
+			for (int j = 0; j < mst.getVertices().get(i).getEdges().getKeyValuePairs().size(); j++) {
+				String string = mst.getVertices().get(i).getVertexId() + " " + mst.getVertices().get(i).getEdges().getKeyValuePairs().get(j).getVertex().getVertexId()
+						+ " " +  mst.getVertices().get(i).getEdges().getKeyValuePairs().get(j).getWeight() +  System.lineSeparator();
+				solString.append(string);
+			}
+		}
+		
+		System.out.println("The solution string is ");
+		System.out.println(solString);
+		
+		printStringToFile(solString, new File("output.txt"));
+
+	}
+
+	private void printStringToFile(StringBuffer solString, File file) {
+		try{
+		    PrintWriter writer = new PrintWriter(file);
+		    writer.println(solString.toString());
+		    writer.close();
+		} catch (Exception e) {
+		   e.printStackTrace();
+		}
+	}
+
+	public void process(File inputFile) {
+		input = readFile(inputFile);
+		createGraphObject(input);
+	}
+
+	public void createGraphObject(String input) {
+		this.input = input;
+		// Read the first input line and create that many vertices
+		String[] lines = input.split("\n");
+		int numberOfVertices = Integer.valueOf(lines[0].split(" ")[0]);
+		graph.setVertices(new ArrayList<Vertex>(numberOfVertices));
+		mst.setVertices(new ArrayList<Vertex>(numberOfVertices));
+		for (Integer i = 1; i <= numberOfVertices; i++) {
+			Vertex vertex = new Vertex();
+			vertex.setVertexId(i);
+			graph.getVertices().add(vertex);
+			Vertex mstVertex = new Vertex();
+			mstVertex.setVertexId(i);
+			mst.getVertices().add(mstVertex);
+		}
+
+		// read subsequent lines
+
+		for (int i = 1; i < lines.length; i++) {
+			// for every line, add the edge
+			int a = Integer.valueOf(lines[i].split(" ")[0]);
+			int b = Integer.valueOf(lines[i].split(" ")[1]);
+			Long weight = Long.valueOf(lines[i].split(" ")[2]);
+			addEdge(a, b, weight, graph);
+//			addEdge(b, a, weight, graph); // because the weights are
+											// bidirectional
+		}
+
+		//System.out.println("INPUT GRAPH-> \n" + graph);
+		//System.out.println("");
+		//System.out.println("OUTPUT TREE-> \n" + mst);
+
+	}
+
+	/**
+	 * @param a
+	 *            id of vertex a
+	 * @param b
+	 *            id of vertex b
+	 * @param weight
+	 *            from vertex a to b
+	 */
+	public void addEdge(Integer a, Integer b, Long weight, Graph graph) {
+
+		// hint: vertex with vertex number k will be kth element of arraylist
+		// graph.vertices
+		// (ensures constant time retrieval)
+		Vertex vertex_a = graph.getVertices().get(a - 1); // o(1) time
+
+		Vertex vertex_b = graph.getVertices().get(b - 1); // o(1) time //this
+															// should exist
+															// because input is
+															// written this way!
+
+		if (vertex_b == null) {
+			throw new RuntimeException("vertex b does not exist for some reason");
+		}
+
+		vertex_a.getEdges().insert(new KeyValuePair(weight, vertex_b)); // o(lg
+																		// n
+																		// time)
+	}
+
+	public String readFile(File inputFile) {
+		BufferedReader br = null;
+		String everything = null;
+		try {
+			br = new BufferedReader(new FileReader(inputFile));
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+			while (line != null) {
+				sb.append(line);
+				sb.append(System.lineSeparator());
+				line = br.readLine();
+			}
+			everything = sb.toString();
+			// //System.out.println(everything);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return everything;
+
+	}
+
+}
+
+/**
+ * Created by sirsmokesalot on 10/1/16.
+ */
+class Graph {
+
+	private ArrayList<Vertex> vertices;
+
+	private ArrayList<Vertex> visitedVertices;
+	
+	public ArrayList<Vertex> getVisitedVertices() {
+		return visitedVertices;
+	}
+
+	public void setVisitedVertices(ArrayList<Vertex> visitedVertices) {
+		this.visitedVertices = visitedVertices;
+	}
+
+	public int getVertexPicker() {
+		return vertexPicker;
+	}
+
+	// removes from vertices, adds to visited vertex
+	private int vertexPicker = 0;
+
+	public Vertex pickVertex() {
+		Vertex visitedVertex = vertices.get(vertexPicker);
+//		vertices.set(vertexPicker, null);
+		visitedVertices.add(visitedVertex);
+		vertexPicker++;
+		return visitedVertex;
+		
+	}
+
+	public Graph() {
+		visitedVertices = new ArrayList<>();
+	}
+
+	public ArrayList<Vertex> getVertices() {
+		return vertices;
+	}
+
+	public void setVertices(ArrayList<Vertex> vertices) {
+		this.vertices = vertices;
+	}
+
+	@Override
+	public String toString() {
+		return "Graph{" + "vertices=" + vertices + '}';
+	}
+}
+
+class Vertex {
+	// each vertex will connect to a bunch of other vertices (edges) and each
+	// edge will have a weight associated with it
+
+	// using a LinkedHashMap because it preserves insertion order. key->vertex ,
+	// value->vertex object
+
+	private MinHeapImpl edges;
+	
+	private Integer vertexId;
+
+	public void setVertexId(Integer vertexId) {
+		this.vertexId = vertexId;
+	}
+
+	public MinHeapImpl getEdges() {
+		return edges;
+	}
+
+	public void setEdges(MinHeapImpl edges) {
+		this.edges = edges;
+	}
+
+	public Vertex() {
+		edges = new MinHeapImpl();
+	}
+
+	public Integer getVertexId() {
+		return vertexId;
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("\nVertex : " + vertexId + "\n");
+
+		ArrayList<KeyValuePair> edgeVertices = edges.getKeyValuePairs();
+		// iterate over the minheap
+		for (int i = 0; i < edges.getKeyValuePairs().size(); i++) {
+			sb.append("ID: " + edgeVertices.get(i).getVertex().getVertexId() + "\tweight : " + edgeVertices.get(i).getWeight() + "\n");
+		}
+		return sb.toString();
+	}
+	
+	public KeyValuePair getVertexWithMinWeight() {
+		if(edges.getKeyValuePairs().size()==0) {
+			return null;
+		}
+		return edges.getKeyValuePairs().get(0);
+	}
+}
+/**
+ * Created by sirsmokesalot on 10/29/16.
+ */
+
+class KeyValuePair {
+	private long weight;
+	private Vertex vertex;
+
+	public long getWeight() {
+		return weight;
+	}
+
+	public void setWeight(long weight) {
+		this.weight = weight;
+	}
+
+	public Vertex getVertex() {
+		return vertex;
+	}
+
+	public void setVertex(Vertex vertex) {
+		this.vertex = vertex;
+	}
+
+	@Override
+	public String toString() {
+		return "KeyValuePair [weight=" + weight + ", vertex=" + vertex.getVertexId() + "]";
+	}
+
+	public KeyValuePair(long weight, Vertex vertex) {
+		super();
+		this.weight = weight;
+		this.vertex = vertex;
+	}
+
+	public KeyValuePair() {
+		super();
+	}
+
+}
+
+
+/**
+ * Sammok Kabasi My implementation of a priority queue using a heap. Created by
+ * sirsmokesalot on 10/17/16.
+ */
+class MinHeapImpl {
+
+	// this array list should always be sorted because priority queue
+	private ArrayList<KeyValuePair> keyValuePairs;
+
+	private int totalSize = 0;
+
+	public ArrayList<KeyValuePair> getKeyValuePairs() {
+		return keyValuePairs;
+	}
+
+	public MinHeapImpl(int size) {
+		keyValuePairs = new ArrayList<>(size);
+	}
+
+	public MinHeapImpl() {
+		keyValuePairs = new ArrayList<>();
+	}
+
+	public void insert(KeyValuePair keyValuePair) {
+		// add to the end and heapify up
+		keyValuePairs.add(keyValuePair);
+		try {
+			if (keyValuePairs.size() == 1) {
+				return;
+			}
+			heapifyUp();
+		} finally {
+//			System.out.println("AFTER HEAP INSERT->" + keyValuePairs);
+		}
+	}
+
+	public KeyValuePair extractMin() {
+		KeyValuePair ret = keyValuePairs.get(0);
+
+		if (keyValuePairs.size() == 1) {
+			keyValuePairs.remove(0);
+		} else {
+			keyValuePairs.set(0, keyValuePairs.remove(keyValuePairs.size() - 1));
+			heapifyDown(0);
+		}
+//		System.out.println("AFTER EXTRACT MIN->" + keyValuePairs);
+		return ret;
+	}
+
+	private void heapifyDown(int i) {
+		int s = keyValuePairs.size();
+		int j = 0;
+
+		while (2 * i + 1 < s) {
+			// if left child is the last node, or left child is the bigger node
+			if (2 * i + 1 == s - 1 || keyValuePairs.get(2 * i + 1).getWeight() <= keyValuePairs.get(2 * i + 2).getWeight()) {
+				j = 2 * i + 1;
+			} else { // if right child is bigger node
+				j = 2 * i + 2;
+			}
+			// swap parent with child if parent's weight is more than child's
+			// key
+			if (keyValuePairs.get(i).getWeight() > keyValuePairs.get(j).getWeight()) {
+				swap(i, j);
+				i = j;
+			} else {
+				break;
+			}
+
+			// change current index to that of child's index
+			i = j;
+		}
+	}
+
+	private void heapifyUp() {
+		int i = keyValuePairs.size() - 1;
+		while (i > 0) {
+			int j = Math.floorDiv(i, 2);
+			if (keyValuePairs.get(i).getWeight() < keyValuePairs.get(j).getWeight()) {
+				swap(i, j);
+				i = j;
+			} else {
+				break;
+			}
+		}
+	}
+
+	private void swap(int i, int j) {
+		KeyValuePair temp = keyValuePairs.get(i);
+		keyValuePairs.set(i, keyValuePairs.get(j));
+		keyValuePairs.set(j, temp);
+	}
+
+	public KeyValuePair seek() {
+		return keyValuePairs.get(0);
+	}
+
+//	public static void main(String[] args) {
+//		MinHeapImpl heap = new MinHeapImpl();
+//		Vertex vertex = new Vertex();
+//		vertex.setVertexId(2);
+//		heap.insert(new KeyValuePair(7, vertex));
+//		heap.insert(new KeyValuePair(6, new Vertex()));
+//		heap.insert(new KeyValuePair(10, new Vertex()));
+//		heap.extractMin();
+//		heap.insert(new KeyValuePair(4, new Vertex()));
+//		heap.insert(new KeyValuePair(3, new Vertex()));
+//		heap.insert(new KeyValuePair(200, new Vertex()));
+//		heap.delete(2);
+//		heap.extractMin();
+//		heap.extractMin();
+//		heap.extractMin();
+//
+//	}
+
+	public void delete(int vertexId) {
+
+		int j = 0;
+		for (j = 0; j < keyValuePairs.size(); j++) {
+			if (keyValuePairs.get(j).getVertex().getVertexId() != null && keyValuePairs.get(j).getVertex().getVertexId() == vertexId) {
+				break;
+			}
+		}
+		if (j == keyValuePairs.size() - 1) {
+			keyValuePairs.remove(j);
+			return;
+		}
+		keyValuePairs.set(j, keyValuePairs.remove(keyValuePairs.size() - 1));
+		heapifyDown(j);
+//		System.out.println("AFTER DELETE " + vertexId + " -> " + keyValuePairs);
+	}
+	
+	class MinHeapForVertices {
+		
+		private ArrayList<Vertex> vertices = new ArrayList<>();
+		
+		public void insert() {
+			
+		}
+	}
+
+}
+
+
+

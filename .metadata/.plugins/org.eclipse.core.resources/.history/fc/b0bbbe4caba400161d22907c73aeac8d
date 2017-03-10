@@ -1,0 +1,18 @@
+package com.sammok.medianof2sortedarrays;
+
+public class Solution {
+	public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+
+		
+		findMedian(nums1, nums2, 0, nums1.length, 0, nums2.length);
+		return (double) 0;
+	}
+
+	public int findMedian(int[] nums1, int[] nums2, int startNums1, int endNums1, int startNums2, int endNums2) {
+		
+		if()
+		
+		
+		return 0;
+	}
+}

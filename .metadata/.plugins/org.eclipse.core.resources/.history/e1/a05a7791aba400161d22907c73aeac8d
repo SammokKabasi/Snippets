@@ -1,0 +1,25 @@
+package com.sammok.medianof2sortedarrays;
+
+public class Solution {
+	public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+
+		findMedian(nums1, nums2, 0, nums1.length, 0, nums2.length);
+		
+	}
+
+	public int findMedian(int[] nums1, int[] nums2, int startNums1, int endNums1, int startNums2, int endNums2) {
+
+		// base case- when both arrays have only 2 integers
+		if (endNums1 - startNums1 == 1 && endNums2 - startNums2 == 1) {
+			return (double)(Math.max(nums1[startNums1], nums2[startNums2]) + Math.min(nums1[endNums1], nums2[endNums2])) / 2;
+		}
+
+		return -1;
+	}
+
+	public static void main(String[] args) {
+		int nums1[] = { 1, 4 };
+		int nums2[] = { 2, 3 };
+		String s = new Solution().findMedianSortedArrays(nums1, nums2);
+	}
+}

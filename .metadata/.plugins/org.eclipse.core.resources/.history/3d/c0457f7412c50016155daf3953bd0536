@@ -1,0 +1,45 @@
+package com.leetcode.threesum;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
+public class Solution {
+	public List<List<Integer>> threeSum(int[] nums) {
+		HashSet<List<Integer>> set = new HashSet<>();
+
+		HashMap<Integer, Integer> map = new HashMap<>();
+		// create a hashmap that maps num to index
+		for (int i = 0; i < nums.length; i++) {
+			map.put(nums[i], i);
+		}
+		System.out.println(map);
+		for (int i = 0; i < nums.length; i++) {
+			for (int j = 0; i < nums.length; j++) {
+				System.out.println(i+","+j);
+				if (i == j) {
+					continue;
+				}
+				int diff = 0 - (nums[i] + nums[j]);
+				Integer diffIndex = map.get(diff);
+				if (diffIndex == null || i == diffIndex || j == diffIndex) {
+					continue;
+				}
+				ArrayList<Integer> res = new ArrayList<>();
+				res.add(nums[i]);
+				res.add(nums[j]);
+				res.add(diff);
+				Collections.sort(res);
+				set.add(res);
+			}
+		}
+		return new ArrayList<>(set);
+	}
+
+	public static void main(String[] args) {
+		int[] ints = { 3, 0, -2, -1, 1, 2 };
+		System.out.println(new Solution().threeSum(ints));
+	}
+}
